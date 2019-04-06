@@ -7,6 +7,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Utils exposing (borderHeight, borderWidth)
 import Types exposing (..)
+import RayControl exposing (..)
 
 root : Walls -> Mouse.Position -> Html msg
 root walls position =
@@ -30,19 +31,20 @@ drawCursor position =
         ]
         []
 
-replaceLineEndWithMousePosition: Mouse.Position -> Line -> Line
-replaceLineEndWithMousePosition position line = 
+replaceLineStartWithMousePosition: Mouse.Position -> Line -> Line
+replaceLineStartWithMousePosition position line = 
     let 
         mouse_x = position.x
         mouse_y = position.y
-        end = line.end
+        start = line.start
     in
-        {line | end = { end | x = (toFloat mouse_x), y = (toFloat mouse_y) } }    
+        {line | start = { start | x = (toFloat mouse_x), y = (toFloat mouse_y) } }    
 
 drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
 drawFromPointToCorners position walls = 
     walls
-    |> List.map(replaceLineEndWithMousePosition position)
+    |> List.map(replaceLineStartWithMousePosition position)
+    |> RayControl.resolve(walls) -- cut the rays to appropriate length 
     |> List.map(drawLine "red")
     |> g[]
 

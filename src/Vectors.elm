@@ -6,6 +6,12 @@ type alias Position =
     , y : Float
     }
 
+type alias Intercept = 
+    { x : Float
+    , y : Float
+    , t1 : Float
+    }
+
 type alias Line =
     { start : Position
     , end : Position
