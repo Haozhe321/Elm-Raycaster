@@ -11,7 +11,7 @@ root : Walls -> Mouse.Position -> Html msg
 root walls position =
     svg
         [ width "600"
-        , height "600"
+        , height "360"
         ]
         [ drawWalls walls
         , drawCursor position
@@ -49,7 +49,7 @@ drawLine line =
             , x2 (toString lineEnd.x)
             , y2 (toString lineEnd.y)
             , stroke "black"
-            , strokeWidth "5"
+            , strokeWidth "1"
             , strokeLinecap "round"
             ]
             []
