@@ -16,7 +16,7 @@ root walls position =
         ]
         [ drawWalls walls
         , drawCursor position
-        , drawLineToCursor position
+        , drawFromPointToCorners position walls
         ]
 
 
@@ -30,27 +30,30 @@ drawCursor position =
         ]
         []
 
-drawLineToCursor : Mouse.Position -> Svg msg
-drawLineToCursor position = 
-    Svg.line[
-          x1 (toString (borderWidth / 2))
-        , y1 (toString (borderHeight / 2))
-        , x2 (toString position.x)
-        , y2 (toString position.y)
-        , stroke "red"
-        , strokeWidth "1"
-        , strokeLinecap "round"
-    ]
-    []
+replaceLineEndWithMousePosition: Mouse.Position -> Line -> Line
+replaceLineEndWithMousePosition position line = 
+    let 
+        mouse_x = position.x
+        mouse_y = position.y
+        end = line.end
+    in
+        {line | end = { end | x = (toFloat mouse_x), y = (toFloat mouse_y) } }    
+
+drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
+drawFromPointToCorners position walls = 
+    walls
+    |> List.map(replaceLineEndWithMousePosition position)
+    |> List.map(drawLine "red")
+    |> g[]
 
 drawWalls : Walls -> Svg msg
 drawWalls walls =
     g []
-        (List.map drawLine walls)
+        (List.map (drawLine "black") walls)
 
 
-drawLine : Line -> Svg msg
-drawLine line =
+drawLine : String -> Line -> Svg msg
+drawLine color line =
     let
         lineStart =
             Vectors.start line
@@ -63,8 +66,8 @@ drawLine line =
             , y1 (toString lineStart.y)
             , x2 (toString lineEnd.x)
             , y2 (toString lineEnd.y)
-            , stroke "black"
-            , strokeWidth "2"
+            , stroke color
+            , strokeWidth "1"
             , strokeLinecap "round"
             ]
             []
