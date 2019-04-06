@@ -5,16 +5,18 @@ import Mouse
 import Vectors exposing (..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Utils exposing (borderHeight, borderWidth)
 import Types exposing (..)
 
 root : Walls -> Mouse.Position -> Html msg
 root walls position =
     svg
-        [ width "600"
-        , height "360"
+        [ width (toString borderWidth)
+        , height (toString borderHeight)
         ]
         [ drawWalls walls
         , drawCursor position
+        , drawLineToCursor position
         ]
 
 
@@ -27,6 +29,19 @@ drawCursor position =
         , fill "red"
         ]
         []
+
+drawLineToCursor : Mouse.Position -> Svg msg
+drawLineToCursor position = 
+    Svg.line[
+          x1 (toString (borderWidth / 2))
+        , y1 (toString (borderHeight / 2))
+        , x2 (toString position.x)
+        , y2 (toString position.y)
+        , stroke "red"
+        , strokeWidth "1"
+        , strokeLinecap "round"
+    ]
+    []
 
 drawWalls : Walls -> Svg msg
 drawWalls walls =
@@ -49,7 +64,7 @@ drawLine line =
             , x2 (toString lineEnd.x)
             , y2 (toString lineEnd.y)
             , stroke "black"
-            , strokeWidth "1"
+            , strokeWidth "2"
             , strokeLinecap "round"
             ]
             []

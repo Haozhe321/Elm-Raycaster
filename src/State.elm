@@ -4,16 +4,16 @@ import Mouse
 import Platform.Cmd as Cmd
 import Platform.Sub as Sub
 import Types exposing (..)
-
+import Utils exposing (borderHeight, borderWidth)
 
 initialModel : Model
 initialModel =
     { walls =
         [ -- Border
-          { start = { x = 0, y = 0 }, end = { x = 600, y = 0 } }
-        , { start = { x = 600, y = 0 }, end = { x = 600, y = 360 } }
-        , { start = { x = 600, y = 360 }, end = { x = 0, y = 360 } }
-        , { start = { x = 0, y = 360 }, end = { x = 0, y = 0 } }
+          { start = { x = 0, y = 0 }, end = { x = borderWidth, y = 0 } }
+        , { start = { x = borderWidth, y = 0 }, end = { x = borderWidth, y = borderHeight } }
+        , { start = { x = borderWidth, y = borderHeight }, end = { x = 0, y = borderHeight } }
+        , { start = { x = 0, y = borderHeight }, end = { x = 0, y = 0 } }
         , -- Polygon #1
           { start = { x = 100, y = 150 }, end = { x = 120, y = 50 } }
         , { start = { x = 120, y = 50 }, end = { x = 200, y = 80 } }
