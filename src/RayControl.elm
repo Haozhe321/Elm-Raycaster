@@ -35,8 +35,7 @@ addAngle line changeInAngle =
         startX = line.start.x
         startY = line.start.y
     in
-        { start = { x = startX, y = startY}
-        , end = { x = startX + dx, y = startY + dy } }
+        {line | end = { x = startX + dx, y = startY + dy } }
 
 {- for a given ray, check against all the lines for point of intercept and return the line with the 
 nearest intercept -}
@@ -53,8 +52,7 @@ changeInterceptToLine ray intercept =
         Nothing ->
             Nothing
         Just intercept ->
-            Just {start = {x = ray.start.x, y = ray.start.y},
-                end = {x = intercept.x, y = intercept.y}}
+            Just {ray | end = {x = intercept.x, y = intercept.y}}
 
 -- Given 2 lines, find their point of interception
 intercept : Line -> Line -> Maybe Intercept
