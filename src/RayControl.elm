@@ -3,12 +3,40 @@ module RayControl exposing(resolve)
 import List.Extra
 import Types exposing (..)
 import Vectors exposing (..)
+import Utils exposing (angleDelta)
 
 
 resolve : Walls -> List Line -> List Line
 resolve walls rays =
-    rays 
+    rays
+        |> addRays
         |> List.filterMap(cutRay walls)
+
+-- Add 2 additional rays for each ray, differing by a small angle
+addRays : List Line -> List Line
+addRays rays =
+    List.concatMap addUpDownRays rays
+
+addUpDownRays : Line -> List Line
+addUpDownRays ray =
+    let 
+        upRay = addAngle ray angleDelta
+        downRay = addAngle ray -angleDelta
+    in
+        [upRay, ray, downRay]
+
+
+addAngle : Line -> Float -> Line
+addAngle line changeInAngle =
+    let 
+        angleOfRay = atan2 (line.end.y - line.start.y) (line.end.x - line.start.x) + changeInAngle
+        dx = cos angleOfRay
+        dy = sin angleOfRay
+        startX = line.start.x
+        startY = line.start.y
+    in
+        { start = { x = startX, y = startY}
+        , end = { x = startX + dx, y = startY + dy } }
 
 {- for a given ray, check against all the lines for point of intercept and return the line with the 
 nearest intercept -}

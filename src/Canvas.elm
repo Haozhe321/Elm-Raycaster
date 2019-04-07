@@ -43,10 +43,10 @@ replaceLineStartWithMousePosition position line =
 drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
 drawFromPointToCorners position walls = 
     walls
-    |> List.map(replaceLineStartWithMousePosition position)
-    |> RayControl.resolve(walls) -- cut the rays to appropriate length 
-    |> List.map(drawLine "red")
-    |> g[]
+        |> List.map(replaceLineStartWithMousePosition position) --form a ray from all corners to the cursor position
+        |> RayControl.resolve(walls)
+        |> List.map(drawLine "red")
+        |> g[]
 
 drawWalls : Walls -> Svg msg
 drawWalls walls =

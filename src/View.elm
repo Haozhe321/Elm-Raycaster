@@ -13,5 +13,5 @@ root model =
                 Canvas.root model.walls position
 
             _ ->
-                Html.text "Initializing."
+                Html.text "Cursor here"
         ]
