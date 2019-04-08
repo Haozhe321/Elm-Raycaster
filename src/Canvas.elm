@@ -8,6 +8,7 @@ import Svg.Attributes exposing (..)
 import Utils exposing (borderHeight, borderWidth)
 import Types exposing (..)
 import RayControl exposing (..)
+import LineTransformer exposing (..)
 
 root : Walls -> Mouse.Position -> Html msg
 root walls position =
@@ -15,9 +16,12 @@ root walls position =
         [ width (toString borderWidth)
         , height (toString borderHeight)
         ]
-        [ drawWalls walls
-        , drawCursor position
+        -- Note that the later elements in the list will be drawn on top.
+        -- TODO: Debug using raylines and drawn polygons (Shifted colors)
+        [ drawRays position walls
         , drawFromPointToCorners position walls
+        , drawWalls walls
+        , drawCursor position
         ]
 
 
@@ -40,13 +44,22 @@ replaceLineStartWithMousePosition position line =
     in
         {line | start = { start | x = (toFloat mouse_x), y = (toFloat mouse_y) } }    
 
+-- TODO: Create higher order function to abstract out the common part of both the below drawers
 drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
 drawFromPointToCorners position walls = 
     walls
         |> List.map(replaceLineStartWithMousePosition position) --form a ray from all corners to the cursor position
         |> RayControl.resolve(walls)
         |> List.map(drawLine "red")
-        |> g[]
+        |> g []
+
+drawRays : Mouse.Position -> Walls -> Svg msg
+drawRays position walls =
+    walls
+       |> List.map(replaceLineStartWithMousePosition position) --form a ray from all corners to the cursor position
+       |> RayControl.resolve(walls)
+       |> LineTransformer.drawLight
+       |> g []
 
 drawWalls : Walls -> Svg msg
 drawWalls walls =
