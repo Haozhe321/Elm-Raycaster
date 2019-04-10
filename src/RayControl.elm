@@ -53,6 +53,9 @@ changeInterceptToLine ray intercept =
             Nothing
         Just intercept ->
             Just {ray | end = {x = intercept.x, y = intercept.y}}
+            
+isNaNInt : a -> Bool
+isNaNInt x = x /= x
 
 -- Given 2 lines, find their point of interception
 intercept : Line -> Line -> Maybe Intercept
@@ -84,7 +87,15 @@ intercept ray line =
         else if t2 < 0 || t2 > 1 then 
             Nothing
         else
-            Just { x = r_px + r_dx * t1
-            , y = r_py + r_dy * t1
-            , t1 = t1
-            }
+            let 
+                x = r_px + r_dx * t1
+                y = r_py + r_dy * t1
+                t1_result = t1
+            in
+                if (isNaNInt x) || (isNaNInt y) || (isNaNInt t1) then
+                    Nothing
+                else 
+                    Just { x = r_px + r_dx * t1
+                        , y = r_py + r_dy * t1
+                        , t1 = t1_result
+                    }
