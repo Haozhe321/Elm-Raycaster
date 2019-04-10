@@ -50,7 +50,6 @@ draw position walls drawer =
         |> RayControl.resolve(walls)
         |> drawer
 
--- TODO: Create higher order function to abstract out the common part of both the below drawers
 drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
 drawFromPointToCorners position walls = 
     draw position walls (drawLine "red")
