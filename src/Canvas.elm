@@ -9,17 +9,21 @@ import Utils exposing (borderHeight, borderWidth)
 import Types exposing (..)
 import RayControl exposing (..)
 import LineTransformer exposing (..)
+import List.Extra
 
-root : Walls -> Mouse.Position -> Html msg
-root walls position =
-    svg
+root : Walls -> Int -> Mouse.Position -> Html msg
+root walls keyPresses position =
+    let
+        renderCandidates = [drawRays position walls, draw position walls drawFunkyLight, drawFromPointToCorners position walls]
+        renderCandidate =  case List.Extra.getAt (keyPresses % (List.length renderCandidates)) renderCandidates of
+                                        Just x -> x
+                                        _ -> drawRays position walls
+    in svg
         [ width (toString borderWidth)
         , height (toString borderHeight)
         ]
         -- Note that the later elements in the list will be drawn on top.
-        [ drawRays position walls
---        , draw position walls drawFunkyLight
---        , drawFromPointToCorners position walls
+        [ renderCandidate
         , drawWalls walls
         , drawCursor position
         ]

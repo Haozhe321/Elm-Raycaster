@@ -27,11 +27,11 @@ drawFunkyLight listOfRays =
 zipRays : List Line -> List (Line, Line)
 zipRays listOfRays =
     let
-        getAngle : Line -> Float
-        getAngle line = atan2 (line.end.y - line.start.y) (line.end.x - line.start.x)
+        getDirection : Line -> Float
+        getDirection line = atan2 (line.end.y - line.start.y) (line.end.x - line.start.x)
         -- We first sort the given lines by their end point (around the clock) so we avoid drawing overlapping segments.
         sortedRays : List Line
-        sortedRays = List.sortBy getAngle listOfRays
+        sortedRays = List.sortBy getDirection listOfRays
         sortedRaysShiftByOne = case sortedRays of
              x::xs-> xs ++ [x]
              x -> x
@@ -41,7 +41,7 @@ zipRays listOfRays =
 
 
 -- Helper function to transform a list of pair lines into polygons color shifted
-drawPolyColorShift :  Int -> Int -> Int -> Int -> Int -> Int ->(List (Line,Line))-> List (Svg msg)
+drawPolyColorShift :  Int -> Int -> Int -> Int -> Int -> Int -> (List (Line,Line)) -> List (Svg msg)
 drawPolyColorShift startRed startGreen startBlue redInc greenInc blueInc zippedRays =
     let
         getRgbVal n = toString (n % 256)

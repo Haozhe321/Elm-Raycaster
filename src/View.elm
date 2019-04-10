@@ -10,7 +10,7 @@ root model =
     div []
         [ case model.mouse of
             Just position ->
-                Canvas.root model.walls position
+                Canvas.root model.walls model.keyPresses position
 
             _ ->
                 Html.text "Cursor here"

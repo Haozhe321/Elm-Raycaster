@@ -1,6 +1,7 @@
 module State exposing (initialCmd, initialModel, subscriptions, update)
 
 import Mouse
+import Keyboard
 import Platform.Cmd as Cmd
 import Platform.Sub as Sub
 import Types exposing (..)
@@ -43,7 +44,7 @@ initialModel =
         , { start = { x = 480, y = 150 }, end = { x = 400, y = 95 } }
         ]
     , mouse = Nothing
-    }
+    , keyPresses = 0}
 
 
 initialCmd : Cmd Msg
@@ -58,8 +59,13 @@ update msg model =
             ( { model | mouse = Just mouse }
             , Cmd.none
             )
+        KeyPressed _ ->
+            ( {model | keyPresses = model.keyPresses + 1}
+            , Cmd.none)
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Mouse.moves Mouse
+    Sub.batch
+        [ Mouse.moves Mouse
+        , Keyboard.presses KeyPressed]
