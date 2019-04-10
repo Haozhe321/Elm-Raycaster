@@ -17,13 +17,12 @@ root walls position =
         , height (toString borderHeight)
         ]
         -- Note that the later elements in the list will be drawn on top.
-        -- TODO: Debug using raylines and drawn polygons (Shifted colors)
         [ drawRays position walls
-        , drawFromPointToCorners position walls
+--        , draw position walls drawFunkyLight
+--        , drawFromPointToCorners position walls
         , drawWalls walls
         , drawCursor position
         ]
-
 
 drawCursor : Mouse.Position -> Svg msg
 drawCursor position =
@@ -44,45 +43,22 @@ replaceLineStartWithMousePosition position line =
     in
         {line | start = { start | x = (toFloat mouse_x), y = (toFloat mouse_y) } }    
 
+draw : Mouse.Position -> Walls -> (List Line -> Svg msg) -> Svg msg
+draw position walls drawer =
+    walls
+        |> List.map(replaceLineStartWithMousePosition position)
+        |> RayControl.resolve(walls)
+        |> drawer
+
 -- TODO: Create higher order function to abstract out the common part of both the below drawers
 drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
 drawFromPointToCorners position walls = 
-    walls
-        |> List.map(replaceLineStartWithMousePosition position) --form a ray from all corners to the cursor position
-        |> RayControl.resolve(walls)
-        |> List.map(drawLine "red")
-        |> g []
+    draw position walls (drawLine "red")
 
 drawRays : Mouse.Position -> Walls -> Svg msg
 drawRays position walls =
-    walls
-       |> List.map(replaceLineStartWithMousePosition position) --form a ray from all corners to the cursor position
-       |> RayControl.resolve(walls)
-       |> LineTransformer.drawLight
-       |> g []
+    draw position walls drawLight
 
 drawWalls : Walls -> Svg msg
 drawWalls walls =
-    g []
-        (List.map (drawLine "black") walls)
-
-
-drawLine : String -> Line -> Svg msg
-drawLine color line =
-    let
-        lineStart =
-            Vectors.start line
-
-        lineEnd =
-            Vectors.end line
-    in
-        Svg.line
-            [ x1 (toString lineStart.x)
-            , y1 (toString lineStart.y)
-            , x2 (toString lineEnd.x)
-            , y2 (toString lineEnd.y)
-            , stroke color
-            , strokeWidth "1"
-            , strokeLinecap "round"
-            ]
-            []
+    drawLine "black" walls
