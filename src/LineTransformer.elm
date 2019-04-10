@@ -8,11 +8,11 @@ import Vectors exposing (..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
-drawLight : List Line -> Svg msg
-drawLight listOfRays =
+drawLight : List Line -> String -> Svg msg
+drawLight listOfRays color =
         listOfRays
             |> zipRays
-            |> List.map (\(l1, l2) -> drawPoly(l1, l2) "gold")
+            |> List.map (\(l1, l2) -> drawPoly(l1, l2) color)
             |> g[]
 --        drawPolyColorShift zippedRays 0 40 40
 

@@ -14,17 +14,18 @@ import List.Extra
 root : Walls -> Int -> Mouse.Position -> Html msg
 root walls keyPresses position =
     let
-        renderCandidates = [drawRays position walls, draw position walls drawFunkyLight, drawFromPointToCorners position walls]
+        renderCandidates = [drawRays position walls "white", draw position walls drawFunkyLight, drawFromPointToCorners position walls "red"]
         renderCandidate =  case List.Extra.getAt (keyPresses % (List.length renderCandidates)) renderCandidates of
                                         Just x -> x
-                                        _ -> drawRays position walls
+                                        _ -> drawRays position walls "white"
     in svg
         [ width (toString borderWidth)
         , height (toString borderHeight)
         ]
         -- Note that the later elements in the list will be drawn on top.
-        [ renderCandidate
-        , drawWalls walls
+        [ drawBackgroundCanvas "black"
+        , renderCandidate
+        , drawWalls walls "grey"
         , drawCursor position
         ]
 
@@ -33,7 +34,7 @@ drawCursor position =
     circle
         [ cx (toString position.x)
         , cy (toString position.y)
-        , r "5"
+        , r "3"
         , fill "red"
         ]
         []
@@ -54,14 +55,32 @@ draw position walls drawer =
         |> RayControl.resolve(walls)
         |> drawer
 
-drawFromPointToCorners : Mouse.Position -> Walls -> Svg msg
-drawFromPointToCorners position walls = 
-    draw position walls (drawLine "red")
+drawFromPointToCorners : Mouse.Position -> Walls -> String -> Svg msg
+drawFromPointToCorners position walls lineColor = 
+    draw position walls (drawLine lineColor)
 
-drawRays : Mouse.Position -> Walls -> Svg msg
-drawRays position walls =
-    draw position walls drawLight
+drawRays : Mouse.Position -> Walls -> String -> Svg msg
+drawRays position walls color =
+    draw position walls (\lines -> drawLight lines color)
 
-drawWalls : Walls -> Svg msg
-drawWalls walls =
-    drawLine "black" walls
+drawWalls : Walls -> String -> Svg msg
+drawWalls walls color =
+    drawLine color walls
+
+drawBackgroundCanvas : String -> Svg msg
+drawBackgroundCanvas color = 
+    let 
+        getXY point = toString point.x ++ "," ++ toString point.y
+        polyPoints = [{x = 0, y = 0}
+                        , {x = borderWidth, y = 0}
+                        , {x = borderWidth, y = borderHeight}
+                        , {x = 0, y = borderHeight}]
+        pointsStr =  polyPoints
+                        |> List.map getXY
+                        |> String.join " "
+    in 
+        polygon
+            [fill color
+            , stroke color
+            , points pointsStr]
+            []
